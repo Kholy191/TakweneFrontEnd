@@ -1,4 +1,4 @@
-// Backend base URL; the API's CORS policy must allow this app's origin (http://localhost:4200).
+// Production build (Docker): the API is reached on the same origin, nginx proxies /api to it.
 export const environment = {
-  apiBaseUrl: 'https://localhost:7000',
+  apiBaseUrl: '',
 };
