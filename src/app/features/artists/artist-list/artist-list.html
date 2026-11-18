@@ -1,0 +1,52 @@
+<div class="flex flex-col gap-4">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-semibold text-slate-900">Artists</h1>
+      <p class="text-sm text-slate-500">{{ totalRecords() }} total · each artist signs in with their own account</p>
+    </div>
+    <p-button label="Create artist" icon="pi pi-user-plus" (onClick)="createVisible.set(true)" />
+  </div>
+
+  <p-table
+    [value]="artists()"
+    [lazy]="true"
+    (onLazyLoad)="onLazyLoad($event)"
+    [paginator]="true"
+    [rows]="pageSize"
+    [first]="first()"
+    [totalRecords]="totalRecords()"
+    [loading]="loading()"
+    dataKey="id"
+    styleClass="overflow-hidden rounded-lg border border-slate-200"
+  >
+    <ng-template #header>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Country</th>
+        <th class="text-right">Tracks</th>
+        <th>Login</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-artist>
+      <tr>
+        <td class="font-medium text-slate-900">{{ artist.name }}</td>
+        <td>{{ artist.email }}</td>
+        <td>{{ artist.country }}</td>
+        <td class="text-right">{{ artist.trackCount }}</td>
+        <td>
+          <p-tag [value]="artist.userId ? 'Linked' : 'None'" [severity]="artist.userId ? 'success' : 'secondary'" />
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="5" class="py-8 text-center text-slate-500">No artists yet.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<app-create-artist-dialog [(visible)]="createVisible" (created)="onCreated($event)" />

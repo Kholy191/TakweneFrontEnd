@@ -1,0 +1,81 @@
+<p-dialog
+  header="New track"
+  [(visible)]="visible"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: '34rem' }"
+  (onHide)="onHide()"
+>
+  <form [formGroup]="form" (ngSubmit)="save()" class="flex flex-col gap-4" id="create-track-form">
+    <div class="flex flex-col gap-1">
+      <label for="title" class="text-sm font-medium text-slate-700">Title</label>
+      <input pInputText id="title" formControlName="title" />
+      @if (isInvalid('title')) {
+        <small class="text-red-600">Title is required (max 200 characters).</small>
+      }
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div class="flex flex-col gap-1">
+        <label for="isrc" class="text-sm font-medium text-slate-700">ISRC</label>
+        <input pInputText id="isrc" formControlName="isrc" placeholder="EG-TKW-26-00010" class="uppercase" />
+        @if (isInvalid('isrc')) {
+          <small class="text-red-600">Format: CC-XXX-YY-NNNNN</small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="genre" class="text-sm font-medium text-slate-700">Genre</label>
+        <p-select
+          inputId="genre"
+          formControlName="genre"
+          [options]="genres"
+          [editable]="true"
+          placeholder="Pick or type"
+          appendTo="body"
+        />
+        @if (isInvalid('genre')) {
+          <small class="text-red-600">Genre is required.</small>
+        }
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="releaseDate" class="text-sm font-medium text-slate-700">Release date</label>
+      <p-datepicker
+        inputId="releaseDate"
+        formControlName="releaseDate"
+        dateFormat="yy-mm-dd"
+        [showIcon]="true"
+        appendTo="body"
+      />
+      @if (isInvalid('releaseDate')) {
+        <small class="text-red-600">Release date is required.</small>
+      }
+    </div>
+
+    @if (auth.isAdmin()) {
+      <div class="flex flex-col gap-1">
+        <label for="artist" class="text-sm font-medium text-slate-700">Artist</label>
+        <p-select
+          inputId="artist"
+          formControlName="artistId"
+          [options]="artists()"
+          optionLabel="name"
+          optionValue="id"
+          [filter]="true"
+          placeholder="Choose the artist"
+          appendTo="body"
+        />
+        @if (isInvalid('artistId')) {
+          <small class="text-red-600">Pick the artist this track belongs to.</small>
+        }
+      </div>
+    }
+  </form>
+
+  <ng-template #footer>
+    <p-button label="Cancel" severity="secondary" [text]="true" (onClick)="visible.set(false)" />
+    <p-button label="Create track" icon="pi pi-check" [loading]="saving()" (onClick)="save()" />
+  </ng-template>
+</p-dialog>

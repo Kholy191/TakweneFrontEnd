@@ -1,0 +1,100 @@
+<div class="flex flex-col gap-4">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-semibold text-slate-900">Tracks</h1>
+      <p class="text-sm text-slate-500">
+        {{ auth.isAdmin() ? 'All artists' : 'Your tracks' }} · {{ totalRecords() }} total
+      </p>
+    </div>
+    <p-button label="New track" icon="pi pi-plus" (onClick)="createVisible.set(true)" />
+  </div>
+
+  <div class="flex flex-wrap items-start gap-3 rounded-lg border border-slate-200 bg-white p-4">
+    <div class="flex min-w-64 flex-1 flex-col gap-1">
+      <p-iconfield>
+        <p-inputicon class="pi pi-search" />
+        <input
+          pInputText
+          type="search"
+          class="w-full"
+          placeholder="Search title, artist or ISRC"
+          aria-label="Search tracks"
+          [value]="searchText()"
+          (input)="onSearchInput($any($event.target).value)"
+        />
+      </p-iconfield>
+      @if (searchTooShort()) {
+        <small class="text-amber-600">Type at least 3 characters to search.</small>
+      }
+    </div>
+
+    <p-select
+      [options]="statusOptions"
+      [ngModel]="status()"
+      (ngModelChange)="onStatusChange($event)"
+      placeholder="All statuses"
+      [showClear]="true"
+      class="w-48"
+      ariaLabel="Filter by status"
+    />
+
+    @if (auth.isAdmin()) {
+      <p-select
+        [options]="artists()"
+        optionLabel="name"
+        optionValue="id"
+        [ngModel]="artistId()"
+        (ngModelChange)="onArtistChange($event)"
+        placeholder="All artists"
+        [showClear]="true"
+        [filter]="true"
+        class="w-56"
+        ariaLabel="Filter by artist"
+      />
+    }
+  </div>
+
+  <p-table
+    [value]="tracks()"
+    [lazy]="true"
+    (onLazyLoad)="onLazyLoad($event)"
+    [paginator]="true"
+    [rows]="pageSize"
+    [first]="first()"
+    [totalRecords]="totalRecords()"
+    [loading]="loading()"
+    [rowHover]="true"
+    dataKey="id"
+    styleClass="overflow-hidden rounded-lg border border-slate-200"
+  >
+    <ng-template #header>
+      <tr>
+        <th>Title</th>
+        <th>Artist</th>
+        <th>ISRC</th>
+        <th>Genre</th>
+        <th>Release date</th>
+        <th>Status</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-track>
+      <tr class="cursor-pointer" (click)="open(track)">
+        <td class="font-medium text-slate-900">{{ track.title }}</td>
+        <td>{{ track.artistName }}</td>
+        <td class="font-mono text-sm">{{ formatIsrc(track.isrc) }}</td>
+        <td>{{ track.genre }}</td>
+        <td>{{ track.releaseDate | date: 'mediumDate' }}</td>
+        <td><p-tag [value]="track.status" [severity]="statusSeverity(track.status)" /></td>
+      </tr>
+    </ng-template>
+
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="6" class="py-8 text-center text-slate-500">No tracks match these filters.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<app-create-track-dialog [(visible)]="createVisible" [artists]="artists()" (created)="onCreated($event)" />

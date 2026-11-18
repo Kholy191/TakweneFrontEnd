@@ -1,0 +1,46 @@
+<div class="flex min-h-screen items-center justify-center p-6">
+  <div class="w-full max-w-md rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
+    <div class="mb-6 text-center">
+      <i class="pi pi-headphones text-3xl text-emerald-600"></i>
+      <h1 class="mt-2 text-2xl font-semibold text-slate-900">Takwene</h1>
+      <p class="text-sm text-slate-500">Track management for artists and admins</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+      <div class="flex flex-col gap-1">
+        <label for="email" class="text-sm font-medium text-slate-700">Email</label>
+        <input pInputText id="email" type="email" formControlName="email" autocomplete="username" />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="password" class="text-sm font-medium text-slate-700">Password</label>
+        <input pInputText id="password" type="password" formControlName="password" autocomplete="current-password" />
+      </div>
+
+      <p-button type="submit" label="Sign in" icon="pi pi-sign-in" [loading]="signingIn()" styleClass="w-full" />
+    </form>
+
+    <div class="mt-8 border-t border-slate-200 pt-6">
+      <p class="mb-3 text-center text-xs font-medium tracking-wide text-slate-500 uppercase">
+        Demo accounts (seeded data)
+      </p>
+      <div class="grid grid-cols-2 gap-2">
+        @for (account of demoAccounts; track account.email) {
+          <p-button
+            [label]="'Login as ' + account.label"
+            [icon]="account.icon"
+            severity="secondary"
+            [outlined]="true"
+            size="small"
+            styleClass="w-full"
+            [disabled]="signingIn()"
+            (onClick)="loginAs(account)"
+          />
+        }
+      </div>
+      <p class="mt-3 text-center text-xs text-slate-400">
+        Admins see every artist; artists only see their own tracks.
+      </p>
+    </div>
+  </div>
+</div>

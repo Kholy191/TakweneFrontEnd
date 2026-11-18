@@ -1,0 +1,39 @@
+<p-dialog
+  header="Distribute to DSPs"
+  [(visible)]="visible"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: '30rem' }"
+  (onHide)="onHide()"
+>
+  <div class="flex flex-col gap-2">
+    <label for="dsps" class="text-sm font-medium text-slate-700">Stores</label>
+    <p-multiselect
+      inputId="dsps"
+      [options]="options()"
+      optionLabel="name"
+      optionValue="id"
+      optionDisabled="disabled"
+      [ngModel]="selected()"
+      (ngModelChange)="selected.set($event)"
+      display="chip"
+      placeholder="Select DSPs"
+      appendTo="body"
+      class="w-full"
+    />
+    <small class="text-slate-500">
+      DSPs already pending or live are disabled. A rejected DSP can be sent again.
+    </small>
+  </div>
+
+  <ng-template #footer>
+    <p-button label="Cancel" severity="secondary" [text]="true" (onClick)="visible.set(false)" />
+    <p-button
+      label="Send"
+      icon="pi pi-send"
+      [disabled]="selected().length === 0"
+      [loading]="sending()"
+      (onClick)="send()"
+    />
+  </ng-template>
+</p-dialog>
